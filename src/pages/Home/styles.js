@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled, { keyframes, css } from "styled-components";
 
 export const Container = styled.div`
   max-height: 700px;
@@ -34,7 +34,21 @@ export const Form = styled.form`
   }
 `;
 
-export const SubmitButton = styled.button`
+//ANIMACAO DO BOTAO
+const animated = keyframes`
+  from{
+    transform:rotate(0deg);
+  }
+
+  to{
+    transform:rotate(360deg);
+  }
+`;
+
+export const SubmitButton = styled.button.attrs(({ loading }) => ({
+  type: "submit",
+  disabled: loading,
+}))`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -42,4 +56,17 @@ export const SubmitButton = styled.button`
   background: #0d2636;
   border-top-right-radius: 7px;
   border-bottom-right-radius: 7px;
+
+  &[disabled] {
+    opacity: 0.7;
+    cursor: not-allowed;
+  }
+
+  ${({ loading }) =>
+    loading &&
+    css`
+      svg {
+        animation: ${animated} 2s linear;
+      }
+    `}
 `;
