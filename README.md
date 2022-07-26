@@ -4,6 +4,8 @@ Esse projeto tem como caracteristica principal pegar repositorios do github e fa
 
 ## Tecnologias utilizadas:
 
--React
--html/css
--styled components
+### React
+
+### html/css
+
+### styled components
