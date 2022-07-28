@@ -7,11 +7,7 @@ export default function Routing() {
     <BrowserRouter>
       <Routes>
         <Route exact path="/" element={<Home />} />
-        <Route path="/repositorios/" element={<Repositorios />} />
-        <Route
-          path="/repositorios/:repositoriosId"
-          element={<Repositorios />}
-        />
+        <Route path="/repositorios/:repositorio" element={<Repositorios />} />
       </Routes>
     </BrowserRouter>
   );

@@ -1,6 +1,7 @@
+import { useState, useCallback, useEffect } from "react";
 import { Container, Form, SubmitButton, List, DeleteButton } from "./styles";
 import { FaGithub, FaPlus, FaSpinner, FaBars, FaTrash } from "react-icons/fa";
-import { useState, useCallback, useEffect } from "react";
+import { Link } from "react-router-dom";
 
 import api from "../../services/api";
 
@@ -8,11 +9,25 @@ export default function Home() {
   const [newRepo, setNewRepo] = useState("");
   const [repositorios, setRepositorios] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [alert, setAlert] = useState(null);
+  const [error, setError] = useState(null);
+
+  //salvando - did update
+  useEffect(() => {
+    localStorage.setItem("@repositorios", JSON.stringify(repositorios));
+  }, [repositorios]);
+
+  //buscando - Did mount
+  useEffect(() => {
+    const repoStorage = localStorage.getItem("@repositorios");
+
+    if (repoStorage) {
+      setRepositorios(JSON.parse(repoStorage));
+    }
+  }, []);
 
   function handleChange(e) {
     setNewRepo(e.target.value);
-    setAlert(null);
+    setError(null);
   }
 
   const handleSubmit = useCallback(
@@ -22,12 +37,16 @@ export default function Home() {
       async function loadApi() {
         setLoading(true);
         try {
-          if (!newRepo) throw new Error(`Voce deve digitar um repositorio`);
+          if (newRepo === " ") {
+            throw new Error(`Voce deve digitar um repositorio`);
+          }
 
           const response = await api.get(`repos/${newRepo}`);
 
           const hasRepo = repositorios.find((repo) => repo === newRepo);
-          if (hasRepo) throw new Error(`Esse repositorio ja existe`);
+          if (hasRepo) {
+            throw new Error(`Esse repositorio ja existe`);
+          }
 
           const data = {
             name: response.data.full_name,
@@ -36,7 +55,7 @@ export default function Home() {
           setRepositorios([...repositorios, data.name]);
           setNewRepo("");
         } catch (e) {
-          setAlert(true);
+          setError(true);
           console.log(e);
         } finally {
           setLoading(false);
@@ -58,19 +77,6 @@ export default function Home() {
     },
     [repositorios]
   );
-  //buscando
-  useEffect(() => {
-    const repoStorage = localStorage.getItem("repos");
-
-    if (repoStorage) {
-      setRepositorios(JSON.parse(repoStorage));
-    }
-  }, []);
-
-  //salvando
-  useEffect(() => {
-    localStorage.setItem("repos", JSON.stringify(repositorios));
-  }, [repositorios]);
 
   return (
     <Container>
@@ -79,7 +85,7 @@ export default function Home() {
         Meus Repositorios Favoritos
       </h1>
 
-      <Form alert={alert} onSubmit={handleSubmit}>
+      <Form error={error} onSubmit={handleSubmit}>
         <input
           type="text"
           placeholder="adicionar um repositorio"
@@ -105,9 +111,9 @@ export default function Home() {
               </DeleteButton>
               {repos}
             </span>
-            <a href="#">
+            <Link to={`repositorio/${encodeURIComponent(repos)}`}>
               <FaBars color="#0d2636" size={24} />
-            </a>
+            </Link>
           </li>
         ))}
       </List>

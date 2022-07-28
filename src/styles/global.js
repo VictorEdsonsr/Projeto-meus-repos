@@ -14,7 +14,10 @@ export default createGlobalStyle`
     }
 
     body{
-        background: #0D2636;
+        background: rgb(34, 183, 195);
+  background: linear-gradient(0deg,
+      rgba(34, 183, 195, 1) 11%,
+      rgba(25, 33, 117, 1) 69%);
     }
 
     body,input,button{

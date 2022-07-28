@@ -1,7 +1,7 @@
-export default function Repositorios() {
-  return (
-    <div>
-      <h1>Repositorios</h1>
-    </div>
-  );
+import { Link, useParams } from "react-router-dom";
+
+export default function Repositorios({ match }) {
+  const { repositorio } = useParams();
+
+  return <div>{repositorio}</div>;
 }
