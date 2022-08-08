@@ -1,7 +1,5 @@
-import { Link, useParams } from "react-router-dom";
+import { Container } from "./style.js";
 
-export default function Repositorios({ match }) {
-  const { repositorio } = useParams();
-
-  return <div>{repositorio}</div>;
-}
+export const Repositorios = () => {
+  return <Container>Repositorios</Container>;
+};

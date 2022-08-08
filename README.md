@@ -1,3 +1,0 @@
-# Projeto Meus Repositorios
-
-Em desenvolvimento...

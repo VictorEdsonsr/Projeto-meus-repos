@@ -3,30 +3,20 @@ import { createGlobalStyle } from "styled-components";
 export default createGlobalStyle`
     *{
         margin: 0;
-        border: 0;
         padding: 0;
         box-sizing: border-box;
-        outline: 0;
+        border: 0;
+        font-family: 'Roboto', sans-serif;
+
     }
 
-    html,body, #root{
+    body,#root,html{
         min-height: 100%;
     }
 
     body{
-        background: rgb(34, 183, 195);
-  background: linear-gradient(0deg,
-      rgba(34, 183, 195, 1) 11%,
-      rgba(25, 33, 117, 1) 69%);
-    }
-
-    body,input,button{
-        color:#222;
-        font-size: 14px;
-        font-family: Arial, Helvetica, sans-serif;
-    }
-
-    button{
-        cursor: pointer;
+        padding:10px;
+        background: rgb(17,77,77);
+        background: linear-gradient(0deg, rgba(17,77,77,1) 29%, rgba(110,153,135,1) 81%);
     }
 `;

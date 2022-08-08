@@ -1,13 +1,13 @@
-import Routing from "./Routes";
+import { Routing } from "./Routes";
 import GlobalStyle from "./styles/global";
 
-function App() {
+const App = () => {
   return (
     <>
       <GlobalStyle />
       <Routing />
     </>
   );
-}
+};
 
 export default App;

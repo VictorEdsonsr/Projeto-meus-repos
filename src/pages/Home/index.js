@@ -1,122 +1,104 @@
-import { useState, useCallback, useEffect } from "react";
-import { Container, Form, SubmitButton, List, DeleteButton } from "./styles";
+import { Container, Form, SubmitButton, List, DeleteButton } from "./style.js";
 import { FaGithub, FaPlus, FaSpinner, FaBars, FaTrash } from "react-icons/fa";
-import { Link } from "react-router-dom";
-
+import { useState, useCallback, useEffect } from "react";
 import api from "../../services/api";
 
-export default function Home() {
+export const Home = () => {
   const [newRepo, setNewRepo] = useState("");
   const [repositorios, setRepositorios] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
 
-  //salvando - did update
-  useEffect(() => {
-    localStorage.setItem("@repositorios", JSON.stringify(repositorios));
-  }, [repositorios]);
-
-  //buscando - Did mount
-  useEffect(() => {
-    const repoStorage = localStorage.getItem("@repositorios");
-
-    if (repoStorage) {
-      setRepositorios(JSON.parse(repoStorage));
-    }
-  }, []);
-
-  function handleChange(e) {
+  const handleChange = (e) => {
     setNewRepo(e.target.value);
-    setError(null);
-  }
+  };
 
   const handleSubmit = useCallback(
     (e) => {
       e.preventDefault();
 
-      async function loadApi() {
-        setLoading(true);
+      async function submit() {
         try {
-          if (newRepo === " ") {
-            throw new Error(`Voce deve digitar um repositorio`);
-          }
-
+          setLoading(true);
           const response = await api.get(`repos/${newRepo}`);
-
-          const hasRepo = repositorios.find((repo) => repo === newRepo);
-          if (hasRepo) {
-            throw new Error(`Esse repositorio ja existe`);
-          }
 
           const data = {
             name: response.data.full_name,
           };
 
-          setRepositorios([...repositorios, data.name]);
+          setRepositorios([...repositorios, data]);
           setNewRepo("");
+
+          console.log(repositorios);
         } catch (e) {
-          setError(true);
           console.log(e);
         } finally {
           setLoading(false);
         }
       }
 
-      loadApi();
+      submit();
     },
-    [repositorios, newRepo]
+    [newRepo, repositorios]
   );
 
   const handleDelete = useCallback(
     (repos) => {
-      const find = repositorios.filter((repo) => {
-        return repo !== repos;
-      });
-
+      const find = repositorios.filter((r) => r.name !== repos);
       setRepositorios(find);
     },
     [repositorios]
   );
 
+  useEffect(() => {
+    localStorage.setItem("@repos", JSON.stringify(repositorios));
+  }, [repositorios]);
+
+  useEffect(() => {
+    const repoStorage = localStorage.getItem("@repos");
+
+    if (repoStorage) {
+      setRepositorios(JSON.parse(repoStorage));
+    }
+  }, []);
+
   return (
     <Container>
       <h1>
-        <FaGithub size={30} />
-        Meus Repositorios Favoritos
+        <FaGithub size={24} />
+        Meus Repositorios
       </h1>
-
-      <Form error={error} onSubmit={handleSubmit}>
+      <Form onSubmit={(e) => handleSubmit(e)}>
         <input
           type="text"
-          placeholder="adicionar um repositorio"
+          placeholder="Digite um repositorio"
           value={newRepo}
-          onChange={handleChange}
+          onChange={(e) => handleChange(e)}
         />
-
         <SubmitButton loading={loading ? 1 : 0}>
           {loading ? (
-            <FaSpinner size={20} color="white" />
+            <FaSpinner size={24} color="#fff" />
           ) : (
-            <FaPlus size={20} color="white" />
+            <FaPlus size={24} color="#fff" />
           )}
         </SubmitButton>
       </Form>
 
       <List>
-        {repositorios.map((repos) => (
-          <li key={repos}>
+        {repositorios.map((repos, index) => (
+          <li key={index}>
             <span>
-              <DeleteButton onClick={() => handleDelete(repos)}>
-                <FaTrash size={18} color="#0d2636" />
+              <DeleteButton onClick={() => handleDelete(repos.name)}>
+                <FaTrash color="rgba(17, 77, 77, 1)" size={18} />
               </DeleteButton>
-              {repos}
+              {repos.name}
             </span>
-            <Link to={`repositorio/${encodeURIComponent(repos)}`}>
-              <FaBars color="#0d2636" size={24} />
-            </Link>
+
+            <a href="#">
+              <FaBars color="rgba(17, 77, 77, 1)" size={20} />
+            </a>
           </li>
         ))}
       </List>
     </Container>
   );
-}
+};
