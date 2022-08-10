@@ -15,7 +15,7 @@ export const Container = styled.div`
   h1 {
     display: flex;
     align-items: center;
-    font-size: 29px;
+    font-size: 27px;
     svg {
       margin-right: 5px;
     }
