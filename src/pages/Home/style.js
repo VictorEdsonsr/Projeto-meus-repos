@@ -29,7 +29,8 @@ export const Form = styled.form`
 
   input {
     flex: 1;
-    border: black 1px solid;
+    border: 1px solid
+      ${({ error }) => (error ? "#FF0000" : "rgba(17, 77, 77, 1)")};
     outline: none;
     border-bottom-left-radius: 10px;
     border-top-left-radius: 10px;
@@ -97,6 +98,11 @@ export const List = styled.div`
     display: flex;
     justify-content: space-between;
     align-items: center;
+    margin: 10px auto;
+
+    & + li {
+      border-top: 1px solid #eee;
+    }
 
     span {
       display: flex;

@@ -7,7 +7,7 @@ export const Routing = () => {
     <BrowserRouter>
       <Routes>
         <Route path="/" element={<Home />} />
-        <Route path="/repositorios" element={<Repositorios />} />
+        <Route path="/repositorios/:reposId" element={<Repositorios />} />
       </Routes>
     </BrowserRouter>
   );
