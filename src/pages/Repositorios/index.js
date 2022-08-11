@@ -1,7 +1,18 @@
 import { useEffect, useState } from "react";
-import { Container, Owner, Loading, BackButton } from "./style.js";
+import {
+  Container,
+  Owner,
+  Loading,
+  BackButton,
+  IssuesList,
+  ButtonsActions,
+} from "./style.js";
 import { useParams } from "react-router-dom";
-import { FaArrowAltCircleLeft } from "react-icons/fa";
+import {
+  FaArrowAltCircleLeft,
+  FaArrowLeft,
+  FaArrowRight,
+} from "react-icons/fa";
 import api from "../../services/api";
 
 export const Repositorios = () => {
@@ -9,6 +20,7 @@ export const Repositorios = () => {
   const [repositorio, setRepositorio] = useState({});
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [pages, setPages] = useState(1);
 
   useEffect(() => {
     async function load() {
@@ -27,12 +39,32 @@ export const Repositorios = () => {
       setRepositorio(repositorioData.data);
       setIssues(issuesData.data);
       setLoading(false);
-
-      console.log(repositorio);
     }
 
     load();
   }, [reposId]);
+
+  const handleAction = (action) => {
+    setPages(action === "back" ? pages - 1 : pages + 1);
+  };
+
+  useEffect(() => {
+    async function loading() {
+      const nomeRepo = reposId;
+
+      const response = await api.get(`/repos/${nomeRepo}/issues`, {
+        params: {
+          state: "open",
+          page: pages,
+          per_page: 5,
+        },
+      });
+
+      setIssues(response.data);
+    }
+
+    loading();
+  }, [reposId, pages]);
 
   if (loading) {
     return <Loading>Carregando...</Loading>;
@@ -41,13 +73,46 @@ export const Repositorios = () => {
   return (
     <Container>
       <BackButton to="/">
-        <FaArrowAltCircleLeft color="rgba(17, 77, 77, 1)" size={20} />
+        <FaArrowAltCircleLeft color="rgba(17, 77, 77, 1)" size={50} />
       </BackButton>
       <Owner>
         <img src={repositorio.owner.avatar_url} alt={repositorio.full_name} />
         <h1>{repositorio.name}</h1>
         <p>{repositorio.description}</p>
       </Owner>
+
+      <IssuesList>
+        {issues.map((issue) => (
+          <li key={issue.id}>
+            <article>
+              <img src={issue.user.avatar_url} alt={issue.user.login} />
+
+              <div>
+                <strong>
+                  <a href={issue.html_url}>{issue.title}</a>
+                  {issue.labels.map((label) => (
+                    <span key={label.id}>{label.name}</span>
+                  ))}
+                </strong>
+              </div>
+            </article>
+            <p>{issue.user.login}</p>
+          </li>
+        ))}
+
+        <ButtonsActions>
+          <button
+            disabled={pages < 2}
+            type="button"
+            onClick={() => handleAction("back")}
+          >
+            <FaArrowLeft size={24} color="white" />
+          </button>
+          <button type="button" onClick={() => handleAction("next")}>
+            <FaArrowRight size={24} color="white" />
+          </button>
+        </ButtonsActions>
+      </IssuesList>
     </Container>
   );
 };
