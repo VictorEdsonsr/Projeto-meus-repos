@@ -6,6 +6,7 @@ import {
   BackButton,
   IssuesList,
   ButtonsActions,
+  FilterButtons,
 } from "./style.js";
 import { useParams } from "react-router-dom";
 import {
@@ -21,6 +22,12 @@ export const Repositorios = () => {
   const [issues, setIssues] = useState([]);
   const [loading, setLoading] = useState(true);
   const [pages, setPages] = useState(1);
+  const [filters, setFilters] = useState([
+    { state: "all", label: "Todas", active: false },
+    { state: "open", label: "Abertas", active: false },
+    { state: "closed", label: "Fechadas", active: true },
+  ]);
+  const [filterIndex, setFilterIndex] = useState(0);
 
   useEffect(() => {
     async function load() {
@@ -30,7 +37,7 @@ export const Repositorios = () => {
         api.get(`/repos/${response}`),
         api.get(`/repos/${response}/issues`, {
           params: {
-            state: "open",
+            state: filters.find((f) => f.active).state,
             per_page: 5,
           },
         }),
@@ -54,7 +61,7 @@ export const Repositorios = () => {
 
       const response = await api.get(`/repos/${nomeRepo}/issues`, {
         params: {
-          state: "open",
+          state: filters[filterIndex].state,
           page: pages,
           per_page: 5,
         },
@@ -64,7 +71,11 @@ export const Repositorios = () => {
     }
 
     loading();
-  }, [reposId, pages]);
+  }, [reposId, pages, filters, filterIndex]);
+
+  function handleFilter(index) {
+    setFilterIndex(index);
+  }
 
   if (loading) {
     return <Loading>Carregando...</Loading>;
@@ -80,6 +91,18 @@ export const Repositorios = () => {
         <h1>{repositorio.name}</h1>
         <p>{repositorio.description}</p>
       </Owner>
+
+      <FilterButtons active={filterIndex}>
+        {filters.map((filter, index) => (
+          <button
+            key={filter.label}
+            type="button"
+            onClick={() => handleFilter(index)}
+          >
+            {filter.label}
+          </button>
+        ))}
+      </FilterButtons>
 
       <IssuesList>
         {issues.map((issue) => (

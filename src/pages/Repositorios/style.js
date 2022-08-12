@@ -118,3 +118,23 @@ export const ButtonsActions = styled.div`
     }
   }
 `;
+
+export const FilterButtons = styled.div`
+  margin: 20px 0;
+
+  button {
+    background: #eee;
+    padding: 5px 10px;
+    border-radius: 10px;
+    font-size: 16px;
+    border: none;
+    outline: none;
+    margin: 0 10px;
+    cursor: pointer;
+
+    &:nth-child(${({ active }) => active + 1}) {
+      background: rgba(17, 77, 77, 1);
+      color: white;
+    }
+  }
+`;
